@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Cup Live Scores</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f1419;
+            color: #ffffff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #1a1f2e;
+            padding-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .date {
+            font-size: 13px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .matches {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .match {
+            background: #1a1f2e;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #2563eb;
+        }
+
+        .match.live {
+            border-left-color: #ef4444;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .match-status {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #ef4444;
+        }
+
+        .match-status.finished {
+            color: #888;
+        }
+
+        .teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .team-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .vs {
+            padding: 0 15px;
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .match-time {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .goals {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 12px;
+            line-height: 1.8;
+            color: #ccc;
+        }
+
+        .goal {
+            margin-bottom: 6px;
+        }
+
+        .goal:last-child {
+            margin-bottom: 0;
+        }
+
+        .goal-player {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .goal-minute {
+            color: #888;
+            font-size: 11px;
+        }
+
+        .no-matches {
+            text-align: center;
+            color: #888;
+            padding: 40px 20px;
+            font-size: 14px;
+        }
+
+        .refresh-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 12px 24px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚽ World Cup Live</h1>
+            <p class="date" id="currentDate"></p>
+        </header>
+
+        <div class="matches" id="matches">
+            <!-- Matches will be populated here -->
+        </div>
+
+        <button class="refresh-btn" onclick="refreshMatches()">🔄 Refresh</button>
+    </div>
+
+    <script>
+        // Mock data - replace with real API calls
+        const matchesData = [
+            {
+                id: 1,
+                team1: "Argentina",
+                team2: "France",
+                score1: 2,
+                score2: 1,
+                status: "LIVE",
+                time: "67'",
+                goals: [
+                    { team: "Argentina", player: "Messi", minute: "23'" },
+                    { team: "France", player: "Mbappé", minute: "45'" },
+                    { team: "Argentina", player: "Di María", minute: "61'" }
+                ]
+            },
+            {
+                id: 2,
+                team1: "Brazil",
+                team2: "Germany",
+                score1: 1,
+                score2: 0,
+                status: "LIVE",
+                time: "34'",
+                goals: [
+                    { team: "Brazil", player: "Neymar", minute: "28'" }
+                ]
+            },
+            {
+                id: 3,
+                team1: "Spain",
+                team2: "Italy",
+                score1: 0,
+                score2: 0,
+                status: "FT",
+                time: "90+2'",
+                goals: []
+            }
+        ];
+
+        function renderMatches() {
+            const container = document.getElementById('matches');
+
+            if (matchesData.length === 0) {
+                container.innerHTML = '<div class="no-matches">No matches today</div>';
+                return;
+            }
+
+            container.innerHTML = matchesData.map(match => `
+                <div class="match ${match.status === 'LIVE' ? 'live' : ''}">
+                    <div class="match-status ${match.status === 'FT' ? 'finished' : ''}">
+                        ${match.status === 'LIVE' ? '● LIVE' : '✓ FINISHED'}
+                    </div>
+
+                    <div class="match-time">${match.time}</div>
+
+                    <div class="teams">
+                        <div class="team">
+                            <div class="team-name">${match.team1}</div>
+                            <div class="score">${match.score1}</div>
+                        </div>
+                        <div class="vs">vs</div>
+                        <div class="team">
+                            <div class="team-name">${match.team2}</div>
+                            <div class="score">${match.score2}</div>
+                        </div>
+                    </div>
+
+                    ${match.goals.length > 0 ? `
+                        <div class="goals">
+                            ${match.goals.map(goal => `
+                                <div class="goal">
+                                    <span class="goal-player">${goal.player}</span>
+                                    <span class="goal-minute">(${goal.minute})</span> - ${goal.team}
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function updateDate() {
+            const today = new Date();
+            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('en-US', options);
+        }
+
+        function refreshMatches() {
+            // Simulate refresh animation
+            const btn = document.querySelector('.refresh-btn');
+            btn.style.animation = 'spin 0.6s';
+
+            // In production, call your API here
+            // fetch('/api/matches').then(res => res.json()).then(data => {
+            //     matchesData = data;
+            //     renderMatches();
+            // });
+
+            setTimeout(() => {
+                btn.style.animation = '';
+            }, 600);
+        }
+
+        // Initialize
+        updateDate();
+        renderMatches();
+
+        // Optional: Auto-refresh every 30 seconds
+        // setInterval(refreshMatches, 30000);
+    </script>
+</body>
+</html>
