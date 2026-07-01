@@ -1,0 +1,11 @@
+.git
+.gitignore
+Claude.dmg
+Novi-AI-Projects-main.zip
+Novi-AI-Projects-main/
+*.md
+*.pdf
+.agents/
+.claude/
+.DS_Store
+node_modules

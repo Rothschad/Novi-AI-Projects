@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Public Good — Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #16271E;
+  --forest: #1F7A4D;
+  --leaf: #2FB46C;
+  --sprout: #7FD8A4;
+  --surface: #E9F6EE;
+  --paper: #FBFBF6;
+  --muted: #5C6B63;
+  --line: #E2E6E1;
+  --sun: #F4B740;
+  --air: #4FA8C9;
+  --error: #C0492F;
+  --radius: 14px;
+  --shadow: 0 2px 12px rgba(22,39,30,0.06);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+}
+/* Login */
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+  padding: 32px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: center;
+}
+.login-container svg { width: 36px; height: 36px; color: var(--leaf); margin: 0 auto; }
+.login-container h1 { font-size: 22px; font-weight: 700; }
+.login-container input {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 15px;
+}
+.login-container input:focus { outline: none; border-color: var(--forest); }
+.login-container button {
+  width: 100%;
+  min-height: 50px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--leaf);
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.login-container button:active { transform: scale(0.97); }
+.login-container button:disabled { opacity: 0.5; cursor: not-allowed; }
+.login-error { color: var(--error); font-size: 13px; }
+/* Dashboard layout */
+.dashboard { display: flex; width: 100%; min-height: 100vh; }
+.sidebar {
+  width: 240px;
+  background: var(--ink);
+  color: #fff;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 0 8px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 8px;
+}
+.sidebar-brand svg { width: 22px; height: 22px; color: var(--leaf); }
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms var(--ease);
+  color: rgba(255,255,255,0.7);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+.sidebar-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.sidebar-link.active { background: rgba(255,255,255,0.12); color: #fff; }
+.sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+.sidebar-logout { margin-top: auto; color: rgba(255,255,255,0.5); }
+.sidebar-logout:hover { color: #fff; }
+.main-content { flex: 1; padding: 32px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
+.main-header { display: flex; justify-content: space-between; align-items: center; }
+.main-header h2 { font-size: 24px; font-weight: 700; }
+/* Stat cards */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.stat-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+}
+.stat-card .stat-value { font-size: 28px; font-weight: 700; }
+.stat-card .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+/* Table */
+.table-wrap {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  overflow-x: auto;
+}
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; padding: 12px 16px; font-weight: 600; font-size: 12px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); cursor: pointer; }
+th:hover { color: var(--forest); }
+td { padding: 10px 16px; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface); }
+/* Need score bar */
+.need-bar { height: 6px; background: var(--line); border-radius: 10px; overflow: hidden; min-width: 60px; }
+.need-fill { height: 100%; border-radius: 10px; transition: width 300ms var(--ease); }
+.need-low { background: var(--leaf); }
+.need-mid { background: var(--sun); }
+.need-high { background: var(--error); }
+/* Badges */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.status-active { background: var(--surface); color: var(--forest); }
+.status-passed { background: #E0F7E8; color: #1F7A4D; }
+.status-failed { background: #FFF0EE; color: var(--muted); }
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms var(--ease);
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--leaf); color: #fff; }
+.btn-outline { background: #fff; color: var(--forest); border: 2px solid var(--line); }
+.btn-danger { background: var(--error); color: #fff; }
+.btn-sm { padding: 6px 14px; font-size: 13px; }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+/* Forms */
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 13px; font-weight: 600; color: var(--muted); }
+.form-group input, .form-group textarea, .form-group select {
+  padding: 10px 14px;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--forest); }
+.form-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-size: 14px;
+  z-index: 100;
+}
+/* QR */
+.qr-preview { background: #fff; padding: 16px; border-radius: 10px; display: inline-block; border: 1px solid var(--line); }
+.qr-preview img { display: block; }
+/* Spinner */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { width: 20px; height: 20px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 600ms linear infinite; display: inline-block; }
+.hidden { display: none !important; }
+.feedback-item {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  font-size: 14px;
+}
+.feedback-item .meta { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.tab-bar { display: flex; gap: 4px; margin-bottom: 16px; }
+.tab-btn {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--muted);
+}
+.tab-btn.active { background: var(--surface); color: var(--forest); font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const SUPABASE_URL = 'https://raktiygrfojeltksfvxj.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFnZSIsInJlZiI6InJha3RpeWdyZm9qZWx0a3NmdnhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MjM1MjksImV4cCI6MjA5ODQ5OTUyOX0.7_mNpxFGIQK1lfsFCauxc_YKSTUYz_aiQn2ulMgoeZs';
+const API_URL = `${SUPABASE_URL}/functions/v1/api`;
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const root = document.getElementById('root');
+
+let currentTab = 'overview';
+let session = null;
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+function iconLeaf() { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>`; }
+function iconGrid() { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/></svg>`; }
+function iconMessage() { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`; }
+function iconDownload() { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`; }
+function iconPlus() { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>`; }
+function iconLogout() { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`; }
+
+// --- Login Screen ---
+function renderLogin(error = '') {
+  root.innerHTML = `
+    <div class="login-container">
+      ${iconLeaf()}
+      <h1>Public Good Admin</h1>
+      <p style="font-size:14px;color:var(--muted);">Sign in to manage questions and view data.</p>
+      <form id="login-form">
+        <input type="email" id="login-email" placeholder="Email address" required autocomplete="email">
+        <input type="password" id="login-password" placeholder="Password" required minlength="6" autocomplete="current-password">
+        ${error ? `<div class="login-error">${error}</div>` : ''}
+        <button type="submit" id="login-btn">Sign in</button>
+      </form>
+    </div>`;
+
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const btn = document.getElementById('login-btn');
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      renderLogin(error.message);
+      return;
+    }
+    session = data.session;
+    renderDashboard();
+  });
+}
+
+// --- Dashboard ---
+async function renderDashboard() {
+  const { data: { session: s } } = await supabase.auth.getSession();
+  if (!s) { renderLogin(); return; }
+  session = s;
+
+  root.innerHTML = `
+    <div class="dashboard">
+      <nav class="sidebar">
+        <div class="sidebar-brand">${iconLeaf()} Public Good</div>
+        <button class="sidebar-link active" data-tab="overview">${iconGrid()} Overview</button>
+        <button class="sidebar-link" data-tab="questions">${iconLeaf()} Questions</button>
+        <button class="sidebar-link" data-tab="feedback">${iconMessage()} Feedback</button>
+        <button class="sidebar-link" data-tab="create">${iconPlus()} New Question</button>
+        <button class="sidebar-link sidebar-logout" id="logout-btn">${iconLogout()} Logout</button>
+      </nav>
+      <div class="main-content" id="main-content"></div>
+    </div>`;
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    session = null;
+    renderLogin();
+  });
+
+  document.querySelectorAll('.sidebar-link[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentTab = btn.dataset.tab;
+      document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      switchTab();
+    });
+  });
+
+  switchTab();
+}
+
+function switchTab() {
+  switch(currentTab) {
+    case 'overview': renderOverview(); break;
+    case 'questions': renderQuestions(); break;
+    case 'feedback': renderFeedback(); break;
+    case 'create': renderCreateForm(); break;
+  }
+}
+
+// --- Overview ---
+async function renderOverview() {
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<div style="text-align:center;padding:40px;"><span class="spinner"></span> Loading…</div>';
+
+  const [districts, questions] = await Promise.all([
+    fetch(`${API_URL}/districts`).then(r => r.json()),
+    fetchQuestionsAll()
+  ]);
+
+  const totalVotes = questions.reduce((s, q) => s + q.yes_count + q.no_count, 0);
+  const totalPassed = questions.filter(q => q.status === 'passed').length;
+  const totalActive = questions.filter(q => q.status === 'active').length;
+  const avgYes = questions.length > 0 ? Math.round(questions.reduce((s, q) => s + q.yes_count, 0) / questions.length) : 0;
+
+  main.innerHTML = `
+    <div class="main-header"><h2>Overview</h2></div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">${districts.length}</div><div class="stat-label">Districts</div></div>
+      <div class="stat-card"><div class="stat-value">${questions.length}</div><div class="stat-label">Total Questions</div></div>
+      <div class="stat-card"><div class="stat-value">${totalActive}</div><div class="stat-label">Active</div></div>
+      <div class="stat-card"><div class="stat-value">${totalPassed}</div><div class="stat-label">Passed</div></div>
+      <div class="stat-card"><div class="stat-value">${totalVotes}</div><div class="stat-label">Total Votes</div></div>
+      <div class="stat-card"><div class="stat-value">${avgYes}</div><div class="stat-label">Avg Yes / Question</div></div>
+    </div>
+    <div class="table-wrap">${renderDistrictTable(districts, questions)}</div>`;
+}
+
+function renderDistrictTable(districts, questions) {
+  const rows = districts.map(d => {
+    const qs = questions.filter(q => q.district_id === d.id);
+    const activeQ = qs.filter(q => q.status === 'active').length;
+    const passedQ = qs.filter(q => q.status === 'passed').length;
+    const totalYes = qs.reduce((s, q) => s + q.yes_count, 0);
+    const score = d.need_score || 0;
+    const cls = score > 80 ? 'need-high' : score > 50 ? 'need-mid' : 'need-low';
+    return `<tr>
+      <td><strong>${d.name}</strong></td>
+      <td>${(d.population || 0).toLocaleString()}</td>
+      <td>€${((d.annual_budget_eur || 0)/1000000).toFixed(1)}M</td>
+      <td>${activeQ}</td>
+      <td>${totalYes}</td>
+      <td>${passedQ}</td>
+      <td><div class="need-bar"><div class="need-fill ${cls}" style="width:${score}%"></div></div> ${score}</td>
+    </tr>`;
+  }).join('');
+  return `<table>
+    <thead><tr><th>District</th><th>Population</th><th>Budget</th><th>Active Qs</th><th>Total Yes</th><th>Passed</th><th>Need Score</th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
+}
+
+// --- Questions ---
+async function renderQuestions() {
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<div style="text-align:center;padding:40px;"><span class="spinner"></span> Loading…</div>';
+
+  const questions = await fetchQuestionsAll();
+  const districts = await fetch(`${API_URL}/districts`).then(r => r.json());
+  const districtMap = {};
+  districts.forEach(d => districtMap[d.id] = d.name);
+
+  main.innerHTML = `
+    <div class="main-header">
+      <h2>Questions</h2>
+      <button class="btn btn-primary" onclick="document.querySelector('[data-tab=create]').click()">${iconPlus()} New Question</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>District</th><th>Question</th><th>Yes</th><th>Goal</th><th>Status</th><th>Deadline</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${questions.map(q => `
+            <tr>
+              <td style="font-family:monospace;font-size:12px;">${q.id}</td>
+              <td>${districtMap[q.district_id] || q.district_id}</td>
+              <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${q.text}</td>
+              <td>${q.yes_count}</td>
+              <td>${q.yes_threshold}</td>
+              <td><span class="status-badge status-${q.status}">${q.status}</span></td>
+              <td>${new Date(q.deadline).toLocaleDateString('en-GB')}</td>
+              <td>
+                <div class="btn-group">
+                  ${q.status === 'active' ? `<button class="btn btn-sm btn-outline" onclick="closeQuestion('${q.id}')">Close</button>` : ''}
+                  <button class="btn btn-sm btn-outline" onclick="showQR('${q.id}')">QR</button>
+                </div>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+async function fetchQuestionsAll() {
+  const districts = await fetch(`${API_URL}/districts`).then(r => r.json());
+  const allQ = [];
+  for (const d of districts) {
+    try {
+      const res = await fetch(`${API_URL}/districts/${d.id}/questions`);
+      if (res.ok) allQ.push(...await res.json());
+    } catch(e) {}
+  }
+  return allQ;
+}
+
+window.closeQuestion = async function(id) {
+  if (!confirm('Close this question? Voters will see the final result.')) return;
+  const { error } = await supabase.from('questions').update({ status: 'closed', updated_at: new Date().toISOString() }).eq('id', id);
+  if (error) { showToast('Error: ' + error.message); return; }
+  showToast('Question closed');
+  renderQuestions();
+};
+
+window.showQR = function(id) {
+  const url = `${window.location.origin}/q/${id}`;
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:200;';
+  overlay.innerHTML = `<div style="background:#fff;border-radius:20px;padding:24px;text-align:center;max-width:300px;">
+    <h3 style="margin-bottom:12px;">QR Code</h3>
+    <div class="qr-preview"><img src="${qrSrc}" alt="QR" style="width:200px;height:200px;"></div>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px;word-break:break-all;">${url}</p>
+    <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="this.closest('div').parentElement.remove()">Close</button>
+  </div>`;
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+};
+
+// --- Feedback ---
+async function renderFeedback() {
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<div style="text-align:center;padding:40px;"><span class="spinner"></span> Loading…</div>';
+
+  const questions = await fetchQuestionsAll();
+
+  // Fetch feedback per question using admin client
+  const allFeedback = [];
+  for (const q of questions) {
+    const { data, error } = await supabase
+      .from('feedback')
+      .select('*')
+      .eq('question_id', q.id)
+      .order('created_at', { ascending: false });
+    if (!error && data) {
+      data.forEach(f => allFeedback.push({ ...f, question_text: q.text }));
+    }
+  }
+
+  main.innerHTML = `
+    <div class="main-header"><h2>Feedback</h2><span style="color:var(--muted);font-size:13px;">🔒 Private — never shown publicly</span></div>
+    ${allFeedback.length === 0 ? '<p style="color:var(--muted);text-align:center;padding:40px;">No feedback yet.</p>' : ''}
+    ${allFeedback.map(f => `
+      <div class="feedback-item">
+        <div style="font-weight:600;font-size:13px;color:var(--forest);margin-bottom:4px;">Re: ${f.question_text || f.question_id}</div>
+        <div>${f.text}</div>
+        <div class="meta">${new Date(f.created_at).toLocaleString()}</div>
+      </div>`).join('')}`;
+}
+
+// --- Create Question ---
+async function renderCreateForm() {
+  const main = document.getElementById('main-content');
+  const districts = await fetch(`${API_URL}/districts`).then(r => r.json());
+
+  main.innerHTML = `
+    <div class="main-header"><h2>Create New Question</h2></div>
+    <form class="form-card" id="create-form">
+      <div class="form-group">
+        <label>District</label>
+        <select id="q-district" required>
+          <option value="">Select district…</option>
+          ${districts.map(d => `<option value="${d.id}">${d.name} (need: ${d.need_score})</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Question text</label>
+        <textarea id="q-text" required rows="2" placeholder="e.g. Would you like more greenery in your area?"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Benefit explanation</label>
+        <textarea id="q-benefit" rows="2" placeholder="e.g. Greenery lowers temperature, cleans air, and supports wellbeing."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Question ID (slug)</label>
+        <input type="text" id="q-id" required placeholder="e.g. q-salamanca-2" pattern="[a-zA-Z0-9_-]+">
+      </div>
+      <div class="form-group">
+        <label>Yes threshold</label>
+        <input type="number" id="q-threshold" value="200" min="10" required>
+      </div>
+      <div class="form-group">
+        <label>Deadline</label>
+        <input type="datetime-local" id="q-deadline" required>
+      </div>
+      <button type="submit" class="btn btn-primary" id="create-btn">${iconPlus()} Create Question</button>
+    </form>`;
+
+  // Set default deadline to 30 days from now
+  const d = new Date();
+  d.setDate(d.getDate() + 30);
+  document.getElementById('q-deadline').value = d.toISOString().slice(0, 16);
+
+  document.getElementById('create-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('q-id').value.trim();
+    const district_id = parseInt(document.getElementById('q-district').value);
+    const text = document.getElementById('q-text').value.trim();
+    const benefit = document.getElementById('q-benefit').value.trim();
+    const threshold = parseInt(document.getElementById('q-threshold').value);
+    const deadline = new Date(document.getElementById('q-deadline').value).toISOString();
+
+    const { error } = await supabase.from('questions').insert({
+      id, district_id, text, benefit_explanation: benefit,
+      yes_threshold: threshold, deadline,
+      qr_target_url: `${window.location.origin}/q/${id}`,
+      status: 'active'
+    });
+
+    if (error) {
+      showToast('Error: ' + error.message);
+      return;
+    }
+    showToast('Question created!');
+    renderQuestions();
+  });
+}
+
+// --- Init ---
+async function init() {
+  const { data: { session: s } } = await supabase.auth.getSession();
+  if (s) {
+    session = s;
+    renderDashboard();
+  } else {
+    renderLogin();
+  }
+}
+
+init();
+</script>
+</body>
+</html>

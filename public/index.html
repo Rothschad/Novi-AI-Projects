@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Public Good —</title> Madrid Greenery Initiative</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #16271E;
+  --forest: #1F7A4D;
+  --leaf: #2FB46C;
+  --sprout: #7FD8A4;
+  --surface: #E9F6EE;
+  --paper: #FBFBF6;
+  --muted: #5C6B63;
+  --line: #E2E6E1;
+  --sun: #F4B740;
+  --air: #4FA8C9;
+  --error: #C0492F;
+  --radius-card: 20px;
+  --radius-btn: 14px;
+  --radius-pill: 999px;
+  --shadow: 0 8px 24px rgba(22,39,30,0.08);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: linear-gradient(180deg, var(--surface) 0%, var(--paper) 40%);
+  color: var(--ink);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 16px;
+  line-height: 1.5;
+}
+.app-container { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 16px; }
+.wordmark { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--muted); padding: 4px 0; }
+.wordmark svg { width: 20px; height: 20px; color: var(--leaf); }
+.card {
+  background: #fff;
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border: 1px solid var(--line);
+  animation: fadeUp 0.3s var(--ease);
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface); color: var(--forest);
+  font-size: 12px; font-weight: 600; padding: 6px 14px;
+  border-radius: var(--radius-pill); letter-spacing: 0.5px; align-self: flex-start;
+}
+.badge svg { width: 14px; height: 14px; }
+.question-text {
+  font-family: 'Fraunces', 'Plus Jakarta Sans', serif;
+  font-size: clamp(22px, 5vw, 30px);
+  font-weight: 600; line-height: 1.3; color: var(--ink);
+}
+.benefit { display: flex; flex-direction: column; gap: 8px; }
+.benefit-label { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.benefit-icons { display: flex; gap: 16px; flex-wrap: wrap; }
+.benefit-item { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--ink); }
+.benefit-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+.benefit-item.temp svg { color: var(--sun); }
+.benefit-item.air svg { color: var(--air); }
+.benefit-item.well svg { color: #E06090; }
+.progress-section { display: flex; flex-direction: column; gap: 8px; }
+.progress-label { font-size: 14px; color: var(--muted); font-weight: 500; }
+.progress-label strong { color: var(--ink); font-weight: 700; }
+.progress-bar { height: 10px; background: var(--line); border-radius: var(--radius-pill); overflow: hidden; }
+.progress-fill { height: 100%; background: var(--leaf); border-radius: var(--radius-pill); transition: width 0.6s var(--ease); }
+.progress-fill.almost { background: var(--sun); }
+.progress-pct { font-size: 13px; font-weight: 600; color: var(--muted); text-align: right; }
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; min-height: 56px; border: none; border-radius: var(--radius-pill);
+  font-family: inherit; font-size: 17px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s var(--ease); position: relative; overflow: hidden;
+}
+.btn:active { transform: scale(0.97); }
+.btn:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+.btn-yes { background: var(--leaf); color: #fff; box-shadow: 0 4px 12px rgba(47,180,108,0.3); }
+.btn-yes:hover:not(:disabled) { background: #28a05e; }
+.btn-no { background: #fff; color: var(--ink); border: 2px solid var(--line); box-shadow: none; }
+.btn-no:hover:not(:disabled) { border-color: var(--muted); background: #fafafa; }
+.btn-outline { background: #fff; color: var(--forest); border: 2px solid var(--line); min-height: 48px; font-size: 15px; border-radius: var(--radius-btn); }
+.btn-sm { min-height: 40px; font-size: 14px; padding: 0 16px; width: auto; }
+.thankyou-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+.thankyou-icon svg { width: 32px; height: 32px; color: var(--leaf); }
+.thankyou-icon.celebrate { background: #FFF9E6; }
+.thankyou-icon.celebrate svg { color: var(--sun); }
+.thankyou-title { text-align: center; font-size: 22px; font-weight: 700; }
+.thankyou-sub { text-align: center; font-size: 15px; color: var(--muted); }
+.thankyou-celebrate { text-align: center; font-size: 15px; color: var(--sun); font-weight: 600; }
+.share-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.share-btn {
+  flex: 1; min-width: 90px; min-height: 48px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--surface); border: none; border-radius: var(--radius-btn);
+  font-family: inherit; font-size: 14px; font-weight: 500; color: var(--forest);
+  cursor: pointer; transition: all 0.15s var(--ease);
+}
+.share-btn:active { transform: scale(0.97); }
+.share-btn svg { width: 18px; height: 18px; }
+.feedback-area { display: flex; flex-direction: column; gap: 8px; }
+.feedback-area textarea {
+  width: 100%; min-height: 60px; border: 2px solid var(--line);
+  border-radius: var(--radius-btn); padding: 12px; font-family: inherit;
+  font-size: 14px; resize: vertical; background: #fff; color: var(--ink);
+}
+.feedback-area textarea:focus { outline: none; border-color: var(--forest); }
+.feedback-helper { font-size: 12px; color: var(--muted); }
+.result-status { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: var(--radius-btn); font-size: 14px; font-weight: 600; }
+.result-status.active { background: #FFF9E6; color: var(--sun); }
+.result-status.passed { background: var(--surface); color: var(--leaf); }
+.result-status.failed { background: #FFF5F5; color: var(--muted); }
+.result-deadline { font-size: 13px; color: var(--muted); text-align: center; }
+.result-council { background: var(--surface); border-radius: var(--radius-btn); padding: 16px; font-size: 13px; line-height: 1.6; }
+.result-council strong { font-size: 14px; color: var(--forest); }
+.privacy { text-align: center; font-size: 12px; color: var(--muted); font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.privacy svg { width: 14px; height: 14px; }
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: #fff; padding: 10px 24px;
+  border-radius: var(--radius-pill); font-size: 14px; font-weight: 500;
+  z-index: 100; animation: toastIn 0.3s var(--ease); pointer-events: none;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(12px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+.skeleton { background: var(--line); border-radius: 8px; animation: shimmer 1.5s infinite; }
+@keyframes shimmer { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+.skeleton-badge { width: 100px; height: 28px; border-radius: var(--radius-pill); }
+.skeleton-text { width: 100%; height: 20px; }
+.skeleton-text-short { width: 60%; height: 20px; }
+.skeleton-btn { width: 100%; height: 56px; border-radius: var(--radius-pill); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; } }
+.notfound-icon { width: 80px; height: 80px; margin: 0 auto; opacity: 0.6; }
+.notfound-title { text-align: center; font-size: 20px; font-weight: 700; }
+.notfound-sub { text-align: center; font-size: 14px; color: var(--muted); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { width: 20px; height: 20px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 0.6s linear infinite; }
+a { color: var(--forest); text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="app-container" id="app"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  var SUPABASE_URL = 'https://raktiygrfojeltksfvxj.supabase.co';
+  var API_URL = SUPABASE_URL + '/functions/v1/api';
+  var app = document.getElementById('app');
+
+  function iconLeaf() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>';
+  }
+  function iconThermo() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></svg>';
+  }
+  function iconWind() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>';
+  }
+  function iconHeart() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
+  }
+  function iconCheck() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  }
+  function iconLock() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+  }
+  function iconCopy() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+  }
+  function iconSparkle() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>';
+  }
+  function iconPin() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
+  }
+
+  function showToast(msg) {
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function() { t.remove(); }, 2500);
+  }
+
+  function hasVoted(qid) {
+    try { return localStorage.getItem('voted_' + qid) === 'true'; } catch(e) { return false; }
+  }
+  function markVoted(qid) {
+    try { localStorage.setItem('voted_' + qid, 'true'); } catch(e) {}
+  }
+
+  function escapeHtml(s) {
+    if (!s) return '';
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ---- DATA FETCHING ----
+
+  async function fetchJSON(url) {
+    var r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }
+
+  async function fetchDistricts() {
+    try { return await fetchJSON(API_URL + '/districts'); } catch(e) { return []; }
+  }
+
+  async function fetchQuestion(id) {
+    try { return await fetchJSON(API_URL + '/questions/' + id); } catch(e) { return null; }
+  }
+
+  async function fetchAllQuestions() {
+    var districts = await fetchDistricts();
+    var all = [];
+    for (var i = 0; i < districts.length; i++) {
+      try {
+        var qs = await fetchJSON(API_URL + '/districts/' + districts[i].id + '/questions');
+        for (var j = 0; j < qs.length; j++) {
+          qs[j].district_name = districts[i].name;
+          all.push(qs[j]);
+        }
+      } catch(e) {}
+    }
+    return all;
+  }
+
+  // ---- RENDER: HOME ----
+
+  async function renderHome() {
+    app.innerHTML = '<div class="wordmark">' + iconLeaf() + ' Public Good</div>' +
+      '<div class="card" style="text-align:center;padding:40px;"><span class="spinner"></span> Loading questions&hellip;</div>';
+
+    var allQs = await fetchAllQuestions();
+    var activeQs = [];
+    for (var i = 0; i < allQs.length; i++) {
+      if (allQs[i].status === 'active') activeQs.push(allQs[i]);
+    }
+
+    if (activeQs.length === 0) {
+      app.innerHTML = '<div class="wordmark">' + iconLeaf() + ' Public Good</div>' +
+        '<div class="card" style="text-align:center;"><div class="notfound-icon">' + iconLeaf() + '</div>' +
+        '<div class="notfound-title">No active questions right now</div>' +
+        '<div class="notfound-sub">Check back soon &mdash; new questions are added as neighbourhoods mobilise.</div></div>';
+      return;
+    }
+
+    var html = '<div class="wordmark">' + iconLeaf() + ' Public Good</div>';
+    for (var i = 0; i < activeQs.length; i++) {
+      html += renderQuestionCard(activeQs[i]);
+    }
+    html += '<div class="privacy">' + iconLock() + ' Anonymous &middot; one vote per question &middot; no sign-up</div>';
+    app.innerHTML = html;
+
+    setupVoteButtons(activeQs);
+  }
+
+  function renderQuestionCard(q) {
+    var dn = q.district_name || 'District';
+    var pct = Math.min(100, Math.round((q.yes_count / q.yes_threshold) * 100));
+    var isAlmost = pct >= 90;
+    var benefitHtml = q.benefit_explanation ? '<div style="font-size:13px;color:var(--muted);margin-top:4px;">' + escapeHtml(q.benefit_explanation) + '</div>' : '';
+
+    return '<div class="card">' +
+      '<div class="badge">' + iconPin() + ' ' + escapeHtml(dn).toUpperCase() + '</div>' +
+      '<div class="question-text">' + escapeHtml(q.text) + '</div>' +
+      '<div class="benefit">' +
+        '<div class="benefit-label">Why it matters</div>' +
+        '<div class="benefit-icons">' +
+          '<div class="benefit-item temp">' + iconThermo() + ' Cooler streets</div>' +
+          '<div class="benefit-item air">' + iconWind() + ' Cleaner air</div>' +
+          '<div class="benefit-item well">' + iconHeart() + ' Better wellbeing</div>' +
+        '</div>' + benefitHtml +
+      '</div>' +
+      '<div class="progress-section">' +
+        '<div class="progress-label"><strong>' + q.yes_count + '</strong> neighbours agree &middot; goal ' + q.yes_threshold + '</div>' +
+        '<div class="progress-bar"><div class="progress-fill' + (isAlmost ? ' almost' : '') + '" style="width:' + pct + '%"></div></div>' +
+        '<div class="progress-pct">' + pct + '%</div>' +
+      '</div>' +
+      '<button class="btn btn-yes" data-q="' + q.id + '" data-choice="yes">' + iconLeaf() + ' Yes, I agree</button>' +
+      '<button class="btn btn-no" data-q="' + q.id + '" data-choice="no">No, thank you</button>' +
+    '</div>';
+  }
+
+  // ---- RENDER: QUESTION (single) ----
+
+  async function renderQuestion(questionId) {
+    app.innerHTML = '<div class="wordmark">' + iconLeaf() + ' Public Good</div>' +
+      '<div class="card">' +
+        '<div class="skeleton skeleton-badge"></div>' +
+        '<div class="skeleton skeleton-text"></div>' +
+        '<div class="skeleton skeleton-text-short"></div>' +
+        '<div class="skeleton skeleton-btn"></div>' +
+        '<div class="skeleton skeleton-btn"></div>' +
+      '</div>' +
+      '<div class="privacy">' + iconLock() + ' Anonymous &middot; one vote &middot; no sign-up</div>';
+
+    var q = await fetchQuestion(questionId);
+    if (!q) { renderNotFound(); return; }
+
+    if (hasVoted(questionId) || q.status !== 'active' || new Date(q.deadline) < new Date()) {
+      renderResult(questionId, q);
+      return;
+    }
+
+    app.innerHTML = '<div class="wordmark">' + iconLeaf() + ' Public Good</div>' +
+      renderQuestionCard(q) +
+      '<div class="privacy">' + iconLock() + ' Anonymous &middot; one vote &middot; no sign-up</div>';
+
+    setupVoteButtons([q]);
+  }
+
+  // ---- VOTE HANDLING ----
+
+  function setupVoteButtons(questions) {
+    var btns = app.querySelectorAll('.btn-yes, .btn-no');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener('click', function() {
+        var qid = this.getAttribute('data-q');
+        var choice = this.getAttribute('data-choice');
+
+        // Disable all buttons for this question
+        var allBtns = app.querySelectorAll('[data-q="' + qid + '"]');
+        for (var j = 0; j < allBtns.length; j++) {
+          allBtns[j].disabled = true;
+          if (allBtns[j] === this) {
+            allBtns[j].innerHTML = '<span class="spinner"></span> Submitting&hellip;';
+          }
+        }
+
+        handleVote(qid, choice, questions, allBtns);
+      });
+    }
+  }
+
+  async function handleVote(qid, choice, questions, btns) {
+    try {
+      var res = await fetch(API_URL + '/votes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question_id: qid, choice: choice })
+      });
+
+      if (res.status === 409) {
+        showToast('You already voted on this question');
+        markVoted(qid);
+        renderResult(qid);
+        return;
+      }
+
+      if (!res.ok) {
+        var err = await res.json().catch(function() { return { error: 'Something went wrong' }; });
+        showToast(err.error || 'Error');
+        for (var j = 0; j < btns.length; j++) {
+          btns[j].disabled = false;
+          if (btns[j].getAttribute('data-choice') === 'yes') {
+            btns[j].innerHTML = iconLeaf() + ' Yes, I agree';
+          } else {
+            btns[j].innerHTML = 'No, thank you';
+          }
+        }
+        return;
+      }
+
+      var data = await res.json();
+      markVoted(qid);
+
+      // Find question in our list
+      var q = null;
+      for (var i = 0; i < questions.length; i++) {
+        if (questions[i].id === qid) { q = questions[i]; break; }
+      }
+      if (q) {
+        q.yes_count = data.yes_count;
+        q.no_count = data.no_count;
+        if (data.threshold_met) q.status = 'passed';
+      }
+
+      renderThankyou(qid, q, data.just_reached);
+
+    } catch(e) {
+      showToast('Network error. Please try again.');
+      for (var j = 0; j < btns.length; j++) {
+        btns[j].disabled = false;
+        if (btns[j].getAttribute('data-choice') === 'yes') {
+          btns[j].innerHTML = iconLeaf() + ' Yes, I agree';
+        } else {
+          btns[j].innerHTML = 'No, thank you';
+        }
+      }
+    }
+  }
+
+  // ---- RENDER: THANK YOU ----
+
+  function renderThankyou(questionId, question, justReached) {
+    var dn = (question && question.district_name) ? question.district_name : 'your area';
+    var shareUrl = window.location.href.split('?')[0].replace(/\/q\/.*/, '') + '/#/q/' + questionId;
+    var shareText = 'Vote for more greenery in ' + dn + '! \uD83C\uDF33';
+
+    var html = '<div class="wordmark">' + iconLeaf() + ' Public Good</div>' +
+      '<div class="card" style="align-items:center;text-align:center;">' +
+        '<div class="thankyou-icon' + (justReached ? ' celebrate' : '') + '">' +
+          (justReached ? iconSparkle() : iconCheck()) +
+        '</div>' +
+        '<div class="thankyou-title">Thank you for voting!</div>' +
+        '<div class="thankyou-sub">You&rsquo;re helping green ' + escapeHtml(dn) + '.</div>' +
+        (justReached ? '<div class="thankyou-celebrate">\uD83C\uDF89 You pushed it over the line!</div>' : '') +
+        '<div style="width:100%;">' +
+          '<div style="font-size:14px;font-weight:600;margin-bottom:8px;">Share with a neighbour</div>' +
+          '<div class="share-row">' +
+            '<button class="share-btn" id="share-copy">' + iconCopy() + ' Copy</button>' +
+            '<button class="share-btn" id="share-whatsapp">WhatsApp</button>' +
+            '<button class="share-btn" id="share-sms">SMS</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="feedback-area" style="width:100%;">' +
+          '<textarea placeholder="Anything else? (private)" id="feedback-text" maxlength="1000"></textarea>' +
+          '<div class="feedback-helper">Only the organisers see this.</div>' +
+          '<button class="btn btn-outline btn-sm" id="btn-feedback">Send</button>' +
+        '</div>' +
+        '<a href="#" data-nav="result" data-q="' + questionId + '" style="color:var(--forest);font-weight:600;font-size:15px;">&rarr; See the result</a>' +
+      '</div>';
+
+    app.innerHTML = html;
+
+    // Share buttons
+    document.getElementById('share-copy').addEventListener('click', function() {
+      navigator.clipboard.writeText(shareUrl).then(function() { showToast('Link copied!'); });
+    });
+    document.getElementById('share-whatsapp').addEventListener('click', function() {
+      window.open('https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + shareUrl), '_blank');
+    });
+    document.getElementById('share-sms').addEventListener('click', function() {
+      window.open('sms:?body=' + encodeURIComponent(shareText + ' ' + shareUrl), '_blank');
+    });
+
+    // Feedback
+    document.getElementById('btn-feedback').addEventListener('click', async function() {
+      var text = document.getElementById('feedback-text').value.trim();
+      if (!text) return;
+      var btn = document.getElementById('btn-feedback');
+      btn.disabled = true;
+      btn.textContent = 'Sending\u2026';
+      try {
+        await fetch(API_URL + '/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question_id: questionId, text: text })
+        });
+        showToast('Thanks for your feedback!');
+        document.getElementById('feedback-text').value = '';
+      } catch(e) {
+        showToast('Failed to send. Try again.');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Send';
+    });
+  }
+
+  // ---- RENDER: RESULT ----
+
+  async function renderResult(questionId, questionData) {
+    var q = questionData;
+    if (!q) {
+      q = await fetchQuestion(questionId);
+      if (!q) { renderNotFound(); return; }
+    }
+
+    var dn = q.district_name || q.districts ? q.districts.name : 'District';
+    if (q.districts && q.districts.name) dn = q.districts.name;
+    var pct = Math.min(100, Math.round((q.yes_count / q.yes_threshold) * 100));
+    var isAlmost = pct >= 90 && q.status === 'active';
+    var dl = new Date(q.deadline);
+    var daysLeft = Math.max(0, Math.ceil((dl - new Date()) / (1000 * 60 * 60 * 24)));
+    var fd = dl.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+    var statusBlock = '';
+    if (q.status === 'passed') {
+      statusBlock = '<div class="result-status passed">' + iconCheck() + ' Passed!</div>' +
+        '<div style="text-align:center;font-size:15px;font-weight:600;">\uD83C\uDF89 ' + q.yes_count + '+ neighbours agreed. This is being sent to ' + escapeHtml(dn) + ' council.</div>';
+    } else if (q.status === 'failed' || q.status === 'closed' || new Date(q.deadline) < new Date()) {
+      statusBlock = '<div class="result-status failed">This didn&rsquo;t reach its goal this time.</div>' +
+        '<div style="text-align:center;font-size:14px;color:var(--muted);">Final tally: ' + q.yes_count + ' yes of ' + q.yes_threshold + ' needed</div>';
+    } else {
+      statusBlock = '<div class="result-status active">' + iconSparkle() + ' ' + q.yes_count + ' / ' + q.yes_threshold + (isAlmost ? ' &middot; almost there' : '') + '</div>';
+    }
+
+    var progressHtml = '';
+    if (q.status === 'active') {
+      progressHtml = '<div class="progress-section">' +
+        '<div class="progress-bar"><div class="progress-fill' + (isAlmost ? ' almost' : '') + '" style="width:' + pct + '%"></div></div>' +
+        '<div class="progress-pct">' + pct + '%</div>' +
+        '<div class="result-deadline">Closes ' + fd + (daysLeft > 0 ? ' &middot; ' + daysLeft + ' day' + (daysLeft !== 1 ? 's' : '') + ' left' : '') + '</div>' +
+        (hasVoted(questionId) ? '' : '<a href="#" data-nav="question" data-q="' + questionId + '" style="display:block;text-align:center;margin-top:8px;font-weight:600;">&larr; Vote now</a>') +
+      '</div>';
+    }
+
+    app.innerHTML = '<div class="wordmark">' + iconLeaf() + ' Public Good</div>' +
+      '<div class="card">' +
+        '<div class="badge">' + iconPin() + ' ' + escapeHtml(dn).toUpperCase() + '</div>' +
+        '<div class="question-text">' + escapeHtml(q.text) + '</div>' +
+        statusBlock + progressHtml +
+        '<div class="result-council"><strong>' + escapeHtml(dn) + ' district council</strong><br>This initiative is tracked by the local council. Once the threshold is met, the council reviews the result.</div>' +
+      '</div>';
+
+    if (q.status === 'passed' && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+      setTimeout(confettiBurst, 300);
+    }
+  }
+
+  // ---- RENDER: NOT FOUND ----
+
+  function renderNotFound() {
+    app.innerHTML = '<div class="wordmark">' + iconLeaf() + ' Public Good</div>' +
+      '<div class="card" style="text-align:center;">' +
+        '<div class="notfound-icon">' + iconLeaf() + '</div>' +
+        '<div class="notfound-title">This question isn&rsquo;t available</div>' +
+        '<div class="notfound-sub">It may have been removed or the link might be incorrect.</div>' +
+        '<a href="#" data-nav="home" style="font-weight:600;">&larr; See all questions</a>' +
+      '</div>';
+  }
+
+  // ---- CONFETTI ----
+
+  function confettiBurst() {
+    var colors = ['#2FB46C', '#F4B740', '#7FD8A4', '#E9F6EE', '#4FA8C9', '#FBFBF6'];
+    for (var i = 0; i < 50; i++) {
+      var el = document.createElement('div');
+      el.style.cssText = 'position:fixed;width:8px;height:8px;border-radius:2px;background:' +
+        colors[Math.floor(Math.random() * colors.length)] + ';left:' + Math.random() * 100 +
+        '%;top:-10px;z-index:999;pointer-events:none;animation:confettiFall ' + (1 + Math.random() * 2) +
+        's ease-out forwards;animation-delay:' + Math.random() * 0.5 + 's;';
+      document.body.appendChild(el);
+      setTimeout(function() { el.remove(); }, 3000);
+    }
+  }
+
+  // Inject confetti keyframes
+  (function() {
+    var style = document.createElement('style');
+    style.textContent = '@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(' + (360 + Math.random() * 720) + 'deg);opacity:0}}';
+    document.head.appendChild(style);
+  })();
+
+  // ---- ROUTER (hash-based for file:// compatibility) ----
+
+  function getRoute() {
+    var hash = window.location.hash;
+    // Match #/q/:id
+    var qm = hash.match(/^#\/q\/([a-zA-Z0-9_-]+)$/);
+    if (qm) return { screen: 'question', questionId: qm[1] };
+    // Match #/q/:id/result
+    var rm = hash.match(/^#\/q\/([a-zA-Z0-9_-]+)\/result$/);
+    if (rm) return { screen: 'result', questionId: rm[1] };
+    return { screen: 'home' };
+  }
+
+  function navigateTo(screen, questionId) {
+    if (screen === 'home') {
+      window.location.hash = '';
+    } else if (screen === 'question') {
+      window.location.hash = '#/q/' + questionId;
+    } else if (screen === 'result') {
+      window.location.hash = '#/q/' + questionId + '/result';
+    }
+  }
+
+  function handleRoute() {
+    var route = getRoute();
+    if (route.screen === 'question') {
+      renderQuestion(route.questionId);
+    } else if (route.screen === 'result') {
+      renderResult(route.questionId);
+    } else {
+      renderHome();
+    }
+  }
+
+  // Listen for hash changes
+  window.addEventListener('hashchange', handleRoute);
+
+  // Handle nav-link clicks
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('[data-nav]');
+    if (!link) return;
+    e.preventDefault();
+    var screen = link.getAttribute('data-nav');
+    var qid = link.getAttribute('data-q');
+    navigateTo(screen, qid);
+  });
+
+  // ---- INIT ----
+  handleRoute();
+
+})();
+</script>
+</body>
+</html>
