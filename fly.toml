@@ -6,3 +6,11 @@ primary_region = "cdg"
 
 [[services]]
   internal_port = 80
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
